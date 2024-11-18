@@ -1,6 +1,7 @@
 package org.example.studentlessonservlet.servlet;
 
 import org.example.studentlessonservlet.entity.Lesson;
+import org.example.studentlessonservlet.entity.User;
 import org.example.studentlessonservlet.service.LessonService;
 import org.example.studentlessonservlet.util.DateUtil;
 
@@ -25,7 +26,8 @@ public class AddLessonServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try{
+        try {
+            User user = (User) req.getSession().getAttribute("user");
             String name = req.getParameter("name");
             Date date = DateUtil.webTimeStringToDate(req.getParameter("duration"));
             String lectureName = req.getParameter("lName");
@@ -35,10 +37,11 @@ public class AddLessonServlet extends HttpServlet {
                     .duration(date)
                     .lecturerName(lectureName)
                     .price(price)
+                    .user(user)
                     .build();
             lessonService.addLesson(lesson);
             resp.sendRedirect("/index.jsp");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

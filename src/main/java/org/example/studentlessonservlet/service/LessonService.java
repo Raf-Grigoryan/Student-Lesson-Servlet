@@ -2,6 +2,8 @@ package org.example.studentlessonservlet.service;
 
 import org.example.studentlessonservlet.db.DBConnectionProvider;
 import org.example.studentlessonservlet.entity.Lesson;
+import org.example.studentlessonservlet.entity.User;
+import org.example.studentlessonservlet.entity.UserType;
 import org.example.studentlessonservlet.util.DateUtil;
 
 import java.sql.Connection;
@@ -16,12 +18,13 @@ public class LessonService {
 
     public void addLesson(Lesson lesson) {
         try {
-            String sql = "INSERT INTO lesson(name,duration,lecturer_name,price) VALUES (?,?,?,?)";
+            String sql = "INSERT INTO lesson(name,duration,lecturer_name,price,user_id) VALUES (?,?,?,?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, lesson.getName());
             preparedStatement.setString(2, DateUtil.dateToSqlTimeString(lesson.getDuration()));
             preparedStatement.setString(3, lesson.getLecturerName());
             preparedStatement.setDouble(4, lesson.getPrice());
+            preparedStatement.setInt(5, lesson.getUser().getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -57,7 +60,7 @@ public class LessonService {
     public List<Lesson> getAllLessons() {
         List<Lesson> lessons = new ArrayList<>();
         try {
-            String sql = "SELECT * FROM lesson";
+            String sql = "SELECT l.id,l.name,l.lecturer_name,l.price,l.duration,u.id AS user_id,u.name AS user_name,u.surname,u.email,u.password,u.user_type FROM lesson AS l JOIN user AS u ON l.user_id = u.id";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -67,6 +70,14 @@ public class LessonService {
                         .lecturerName(resultSet.getString("lecturer_name"))
                         .price(resultSet.getDouble("price"))
                         .duration(DateUtil.sqlStringTimeToDate(resultSet.getString("duration")))
+                        .user(User.builder()
+                                .id(resultSet.getInt("user_id"))
+                                .name(resultSet.getString("user_name"))
+                                .surname(resultSet.getString("surname"))
+                                .email(resultSet.getString("email"))
+                                .password(resultSet.getString("password"))
+                                .userType(UserType.valueOf(resultSet.getString("user_type")))
+                                .build())
                         .build();
                 lessons.add(lesson);
             }

@@ -1,5 +1,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="org.example.studentlessonservlet.entity.Student" %>
+<%@ page import="org.example.studentlessonservlet.entity.User" %>
+<%@ page import="org.example.studentlessonservlet.entity.UserType" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -8,7 +10,10 @@
 <body>
 <h1><a href="/index.jsp">BACK</a></h1>
 <h1><a href="/addStudent">ADD</a></h1>
-<%List<Student> students = (List<Student>) request.getAttribute("students");%>
+<%
+    List<Student> students = (List<Student>) request.getAttribute("students");
+    User user = (User) session.getAttribute("user");
+%>
 <table border="1px">
     <tr>
         <th>id</th>
@@ -19,7 +24,10 @@
         <th>Lesson Name</th>
         <th>Lesson Lecturer Name</th>
         <th>Lesson Duration Time</th>
+        <%if (user.getUserType() == UserType.ADMIN) {%>
         <th>Delete / EDIT</th>
+        <%}%>
+
     </tr>
     <% for (Student student : students) { %>
     <tr>
@@ -37,8 +45,13 @@
         </td>
         <td><%=student.getLesson().getLecturerName()%>
         </td>
-        <td><%=student.getLesson().getDuration()%></td>
-        <td><a href="/deleteStudent?id=<%=student.getId()%>">DELETE</a> // <a href="/editStudent?id=<%=student.getId()%>">EDIT</a> </td>
+        <td><%=student.getLesson().getDuration()%>
+        </td>
+        <%if (user.getUserType() == UserType.ADMIN) {%>
+        <td><a href="/deleteStudent?id=<%=student.getId()%>">DELETE</a> // <a
+                href="/editStudent?id=<%=student.getId()%>">EDIT</a></td>
+        <%}%>
+
     </tr>
     <%}%>
 </table>

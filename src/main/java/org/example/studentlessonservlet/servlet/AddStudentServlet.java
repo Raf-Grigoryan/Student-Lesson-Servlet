@@ -2,6 +2,7 @@ package org.example.studentlessonservlet.servlet;
 
 import org.example.studentlessonservlet.entity.Lesson;
 import org.example.studentlessonservlet.entity.Student;
+import org.example.studentlessonservlet.entity.User;
 import org.example.studentlessonservlet.service.LessonService;
 import org.example.studentlessonservlet.service.StudentService;
 
@@ -34,12 +35,14 @@ public class AddStudentServlet extends HttpServlet {
         String email = req.getParameter("email");
         int age = Integer.parseInt(req.getParameter("age"));
         int lessonId = Integer.parseInt(req.getParameter("lessonId"));
+        User user = (User) req.getSession().getAttribute("user");
         Student student = Student.builder()
                 .name(name)
                 .surname(surname)
                 .email(email)
                 .age(age)
                 .lesson(lessonService.findLessonById(lessonId))
+                .user(user)
                 .build();
         studentService.addStudent(student);
         resp.sendRedirect("/index.jsp");

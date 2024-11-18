@@ -3,6 +3,8 @@ package org.example.studentlessonservlet.service;
 import org.example.studentlessonservlet.db.DBConnectionProvider;
 import org.example.studentlessonservlet.entity.Lesson;
 import org.example.studentlessonservlet.entity.Student;
+import org.example.studentlessonservlet.entity.User;
+import org.example.studentlessonservlet.entity.UserType;
 import org.example.studentlessonservlet.util.DateUtil;
 
 import java.sql.Connection;
@@ -17,13 +19,14 @@ public class StudentService {
 
     public void addStudent(Student student) {
         try {
-            String sql = "INSERT INTO student(name,surname,email,age,lesson_id) VALUES(?,?,?,?,?)";
+            String sql = "INSERT INTO student(name,surname,email,age,lesson_id,user_id) VALUES(?,?,?,?,?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, student.getName());
             preparedStatement.setString(2, student.getSurname());
             preparedStatement.setString(3, student.getEmail());
             preparedStatement.setInt(4, student.getAge());
             preparedStatement.setInt(5, student.getLesson().getId());
+            preparedStatement.setInt(6, student.getUser().getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -33,7 +36,7 @@ public class StudentService {
     public List<Student> getAllStudents() {
         List<Student> students = new ArrayList<>();
         try {
-            String sql = "SELECT s.id, s.name,s.surname,s.email,s.age, l.id AS lesson_id,l.name AS lesson_name,l.duration,l.lecturer_name,l.price FROM student AS s JOIN lesson AS l ON s.lesson_id = l.id";
+            String sql = "SELECT s.id, s.name,s.surname,s.email,s.age, l.id AS lesson_id,l.name AS lesson_name,l.duration,l.lecturer_name,l.price,u.id AS user_id,u.name,u.surname,u,email,u.password,u.user_type FROM student AS s JOIN lesson AS l ON s.lesson_id = l.id JOIN user AS u ON s.user_id = u.id";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -49,6 +52,14 @@ public class StudentService {
                                 .duration(DateUtil.sqlStringTimeToDate(resultSet.getString("duration")))
                                 .lecturerName(resultSet.getString("lecturer_name"))
                                 .price(resultSet.getDouble("price"))
+                                .user(User.builder()
+                                        .id(resultSet.getInt("user_id"))
+                                        .name(resultSet.getString("name"))
+                                        .surname(resultSet.getString("surname"))
+                                        .email(resultSet.getString("email"))
+                                        .password(resultSet.getString("password"))
+                                        .userType(UserType.valueOf(resultSet.getString("user_type")))
+                                        .build())
                                 .build())
                         .build();
                 students.add(student);
@@ -62,13 +73,13 @@ public class StudentService {
     public Student getStudentById(int id) {
         Student student = null;
         try {
-            String sql = "SELECT s.id, s.name,s.surname,s.email,s.age, l.id AS lesson_id,l.name AS lesson_name,l.duration,l.lecturer_name,l.price FROM student AS s JOIN lesson AS l ON s.lesson_id = l.id WHERE s.id = ?";
+            String sql = "SELECT s.id, s.name,s.surname,s.email,s.age, l.id AS lesson_id,l.name AS lesson_name,l.duration,l.lecturer_name,l.price,u.id AS user_id,u.name,u.surname,u,email,u.password,u.user_type FROM student AS s JOIN lesson AS l ON s.lesson_id = l.id JOIN user AS u ON s.user_id = u.id WHERE id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
             preparedStatement.executeQuery();
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                student = Student.builder()
+                return student = Student.builder()
                         .id(resultSet.getInt("id"))
                         .name(resultSet.getString("name"))
                         .surname(resultSet.getString("surname"))
@@ -80,6 +91,14 @@ public class StudentService {
                                 .duration(DateUtil.sqlStringTimeToDate(resultSet.getString("duration")))
                                 .lecturerName(resultSet.getString("lecturer_name"))
                                 .price(resultSet.getDouble("price"))
+                                .user(User.builder()
+                                        .id(resultSet.getInt("user_id"))
+                                        .name(resultSet.getString("name"))
+                                        .surname(resultSet.getString("surname"))
+                                        .email(resultSet.getString("email"))
+                                        .password(resultSet.getString("password"))
+                                        .userType(UserType.valueOf(resultSet.getString("user_type")))
+                                        .build())
                                 .build())
                         .build();
             }

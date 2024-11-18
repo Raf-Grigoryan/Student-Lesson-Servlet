@@ -12,7 +12,7 @@
     <title>Add Lesson</title>
 </head>
 <body>
-<h1><a href="/index.jsp">MAIN</a></h1>
+<h1><a href="/WEB-INF/index.jspndex.jsp">MAIN</a></h1>
 <h1><a href="/lesson">Lessons</a></h1>
 <% Lesson lesson = (Lesson) request.getAttribute("lesson");%>
 <form action="/editLesson" method="post">

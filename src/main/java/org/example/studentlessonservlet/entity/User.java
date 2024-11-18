@@ -1,20 +1,20 @@
 package org.example.studentlessonservlet.entity;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student {
+public class User {
     private int id;
     private String name;
     private String surname;
     private String email;
-    private int age;
-    private Lesson lesson;
-    private User user;
+    private String password;
+    private UserType userType;
 }
