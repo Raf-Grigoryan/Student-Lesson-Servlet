@@ -36,7 +36,26 @@ public class StudentService {
     public List<Student> getAllStudents() {
         List<Student> students = new ArrayList<>();
         try {
-            String sql = "SELECT s.id, s.name,s.surname,s.email,s.age, l.id AS lesson_id,l.name AS lesson_name,l.duration,l.lecturer_name,l.price,u.id AS user_id,u.name,u.surname,u,email,u.password,u.user_type FROM student AS s JOIN lesson AS l ON s.lesson_id = l.id JOIN user AS u ON s.user_id = u.id";
+            String sql = "SELECT \n" +
+                    "    s.id, \n" +
+                    "    s.name,\n" +
+                    "    s.surname,\n" +
+                    "    s.email,\n" +
+                    "    s.age, \n" +
+                    "    l.id AS lesson_id,\n" +
+                    "    l.name AS lesson_name,\n" +
+                    "    l.duration,\n" +
+                    "    l.lecturer_name,\n" +
+                    "    l.price,\n" +
+                    "    u.id AS user_id,\n" +
+                    "    u.name AS user_name,\n" +
+                    "    u.surname AS user_surname,\n" +
+                    "    u.email AS user_email,\n" +
+                    "    u.password,\n" +
+                    "    u.user_type\n" +
+                    "FROM student AS s \n" +
+                    "JOIN lesson AS l ON s.lesson_id = l.id \n" +
+                    "JOIN user AS u ON s.user_id = u.id";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
