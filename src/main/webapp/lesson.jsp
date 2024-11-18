@@ -14,11 +14,13 @@
     <title>LESSONS</title>
 </head>
 <body>
-<h1><a href="/index.jsp">BACK</a></h1>
-<h1><a href="/addLesson">ADD LESSON</a></h1>
 <% List<Lesson> lessons = (List<Lesson>) request.getAttribute("lessons");
     User user = (User) session.getAttribute("user");
 %>
+<h1><a href="/index.jsp">BACK</a></h1>
+<%if (user.getUserType() == UserType.ADMIN) {%>
+<h1><a href="/addLesson">ADD LESSON</a></h1>
+<%}%>
 <table border="1px">
     <tr>
         <td>id</td>

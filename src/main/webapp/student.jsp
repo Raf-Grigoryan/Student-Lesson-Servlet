@@ -8,12 +8,16 @@
     <title>Student</title>
 </head>
 <body>
-<h1><a href="/index.jsp">BACK</a></h1>
-<h1><a href="/addStudent">ADD</a></h1>
 <%
     List<Student> students = (List<Student>) request.getAttribute("students");
     User user = (User) session.getAttribute("user");
 %>
+<h1><a href="/index.jsp">BACK</a></h1>
+<%if(user.getUserType() == UserType.ADMIN){%>
+<h1><a href="/addStudent">ADD</a></h1>
+<%}%>
+
+
 <table border="1px">
     <tr>
         <th>id</th>
